@@ -1,0 +1,33 @@
+# Este archivo se ejecuta cada vez que subes cambios a la rama 'main'
+name: Deploy to Firebase Hosting on merge
+'on':
+  push:
+    branches:
+      - main
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      # Paso para configurar Python en el servidor de GitHub
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      # Paso para instalar las dependencias de Python de tu proyecto
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f functions/requirements.txt ]; then pip install -r functions/requirements.txt; fi
+
+      # Paso final que despliega TODO (hosting y functions)
+      - name: Deploy to Firebase
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SUELDOFACIL_WEB_APP }}'
+          projectId: sueldofacil-web-app
+          # La siguiente línea le dice a Firebase que despliegue todo el proyecto
+          target: sueldofacil-web-app
