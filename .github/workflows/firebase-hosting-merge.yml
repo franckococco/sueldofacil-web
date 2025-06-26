@@ -1,4 +1,4 @@
-name: Deploy Full App to Firebase
+name: Deploy to Firebase on Push
 'on':
   push:
     branches:
@@ -7,24 +7,21 @@ jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-
-      - name: Install Python Dependencies
-        run: |
-          python -m pip install --upgrade pip
-          if [ -f functions/requirements.txt ]; then pip install -r functions/requirements.txt; fi
+      - uses: actions/checkout@v4
       
-      # La acción de despliegue, sin el 'target' que lo limitaba
-      - name: Deploy to Firebase
-        uses: FirebaseExtended/action-hosting-deploy@v0
+      # La acción de despliegue AHORA es la oficial para Firebase
+      - uses: 'google-github-actions/auth@v2'
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SUELDOFACIL_WEB_APP }}'
-          projectId: sueldofacil-web-app
-          channelId: live
+          credentials_json: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SUELDOFACIL_WEB_APP }}'
+      
+      - uses: 'google-github-actions/setup-gcloud@v2'
+        
+      - name: 'Deploy to Firebase'
+        run: |-
+          # Prepara el entorno de Python
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r functions/requirements.txt
+          
+          # El comando de despliegue, ahora ejecutado directamente
+          firebase deploy --project sueldofacil-web-app --force
