@@ -9,7 +9,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      # La acción de despliegue AHORA es la oficial para Firebase
       - uses: 'google-github-actions/auth@v2'
         with:
           credentials_json: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SUELDOFACIL_WEB_APP }}'
@@ -19,8 +18,6 @@ jobs:
       - name: 'Deploy to Firebase'
         run: |-
           # Prepara el entorno de Python
-          python -m venv venv
-          source venv/bin/activate
           pip install -r functions/requirements.txt
           
           # El comando de despliegue, ahora ejecutado directamente
