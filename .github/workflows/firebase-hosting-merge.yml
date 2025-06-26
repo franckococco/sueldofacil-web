@@ -17,11 +17,11 @@ jobs:
         
       - name: 'Install Firebase Tools and Deploy'
         run: |-
-          # PASO 1: Instalar firebase-tools
+          # Instalar las herramientas de Firebase
           npm install -g firebase-tools
 
-          # PASO 2: Instalar dependencias de Python
+          # Instalar dependencias de Python
           pip install -r functions/requirements.txt
           
-          # PASO 3: Desplegar
-          firebase deploy --project sueldofacil-web-app --force
+          # EL COMANDO CORRECTO Y EXPLÍCITO: Desplegar AMBAS COSAS
+          firebase deploy --only hosting,functions --project sueldofacil-web-app --force
